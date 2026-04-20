@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Text.Json;
+﻿using System.Text.Json;
 using FlashCard.Models;
 
 namespace FlashCard.Services
@@ -40,6 +35,12 @@ namespace FlashCard.Services
                 System.Diagnostics.Debug.WriteLine($"Error loading: {ex.Message}");
                 return new List<Deck>();
             }
+        }
+
+        public async Task<Deck?> GetDeckByIdAsync(int deckId)
+        {
+            List<Deck> decks = await LoadDecksAsync();
+            return decks.FirstOrDefault(deck => deck.Id == deckId);
         }
 
         public async Task SaveDecksAsync(IEnumerable<Deck> decks)

@@ -1,52 +1,42 @@
-﻿using FlashCard.Models;
+﻿using System.Collections.ObjectModel;
+using FlashCard.Models;
 using FlashCard.Services;
-using System.Collections.ObjectModel; 
 
 namespace FlashCard
 {
     public partial class DecksPage : ContentPage
     {
-        private JsonDataService _dataService;
-        private ObservableCollection<Deck> _decks;
-        private int _nextId = 1;
+        private readonly JsonDataService _dataService = new();
+        private readonly ObservableCollection<Deck> _decks = new();
 
         public DecksPage()
         {
             InitializeComponent();
-            _dataService = new JsonDataService();
-            _decks = new ObservableCollection<Deck>(); 
-            LoadDecks();
+            DecksCollectionView.ItemsSource = _decks;
         }
 
-        private async void LoadDecks()
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            await LoadDecksAsync();
+        }
+
+        private async Task LoadDecksAsync()
         {
             List<Deck> loadedDecks = await _dataService.LoadDecksAsync();
-
-            // Clear and repopulate ObservableCollection
             _decks.Clear();
-            foreach (Deck deck in loadedDecks)
+
+            foreach (Deck deck in loadedDecks.OrderBy(deck => deck.Name))
             {
                 _decks.Add(deck);
             }
 
-            if (_decks.Any())
-            {
-                _nextId = _decks.Max(d => d.Id) + 1;
-            }
-
-            // Assign ItemsSource ONCE (no need to reassign every time)
-            if (DecksCollectionView.ItemsSource == null)
-            {
-                DecksCollectionView.ItemsSource = _decks;
-            }
-
-            UpdateInfo($"Chargé: {_decks.Count} deck(s)");
+            UpdateInfo($"{_decks.Count} deck(s) chargé(s)");
         }
 
-        private void RefreshView()
+        private static int GetNextDeckId(IEnumerable<Deck> decks)
         {
-            DecksCollectionView.ItemsSource = null;
-            DecksCollectionView.ItemsSource = _decks;
+            return decks.Any() ? decks.Max(deck => deck.Id) + 1 : 1;
         }
 
         private void UpdateInfo(string message)
@@ -56,85 +46,101 @@ namespace FlashCard
 
         private async void OnAddDeckClicked(object sender, EventArgs e)
         {
-            string? name = NewDeckEntry.Text?.Trim();
+            string name = NewDeckEntry.Text?.Trim() ?? string.Empty;
 
-            if (string.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
             {
-                await DisplayAlert("Erreur", "Veuillez entrer un nom", "OK");
+                await DisplayAlert("Erreur", "Veuillez entrer un nom de deck.", "OK");
                 return;
             }
 
-            Deck newDeck = new Deck
+            if (_decks.Any(deck => deck.Name.Equals(name, StringComparison.OrdinalIgnoreCase)))
             {
-                Id = _nextId++,
+                await DisplayAlert("Erreur", "Un deck avec ce nom existe déjà.", "OK");
+                return;
+            }
+
+            Deck newDeck = new()
+            {
+                Id = GetNextDeckId(_decks),
                 Name = name,
-                CardCount = 0
+                Cards = new List<Card>()
             };
 
-            _decks.Add(newDeck);  // ← La vue se met à jour automatiquement !
+            _decks.Add(newDeck);
             await _dataService.SaveDecksAsync(_decks.ToList());
 
-            // RefreshView();  ← SUPPRIMÉ !
             NewDeckEntry.Text = string.Empty;
-            UpdateInfo($"Ajouté: {name}");
+            UpdateInfo($"Deck ajouté: {name}");
+        }
+
+        private async void OnOpenDeckClicked(object sender, EventArgs e)
+        {
+            if (sender is not Button button || button.CommandParameter is not Deck deck)
+            {
+                return;
+            }
+
+            await Shell.Current.GoToAsync(nameof(DeckDetailPage), new Dictionary<string, object>
+            {
+                ["Deck"] = deck
+            });
         }
 
         private async void OnEditDeckClicked(object sender, EventArgs e)
         {
-            Button? button = sender as Button;
-            Deck? deck = button?.CommandParameter as Deck;
+            if (sender is not Button button || button.CommandParameter is not Deck deck)
+            {
+                return;
+            }
 
-            if (deck == null) return;
-
-            // Prompt for new name
             string? newName = await DisplayPromptAsync(
-                "Renommer",
-                "Nouveau nom du deck:",
+                "Renommer le deck",
+                "Nouveau nom :",
                 initialValue: deck.Name,
                 placeholder: "Nom du deck"
             );
 
             if (string.IsNullOrWhiteSpace(newName))
             {
-                return; // User cancelled or entered empty
+                return;
             }
 
-            // Update deck name
-            deck.Name = newName.Trim();
-            await _dataService.SaveDecksAsync(_decks.ToList());
+            string trimmedName = newName.Trim();
 
-            RefreshView();
-            UpdateInfo($"Renommé: {newName}");
+            if (_decks.Any(existing => existing.Id != deck.Id && existing.Name.Equals(trimmedName, StringComparison.OrdinalIgnoreCase)))
+            {
+                await DisplayAlert("Erreur", "Un deck avec ce nom existe déjà.", "OK");
+                return;
+            }
+
+            deck.Name = trimmedName;
+            await _dataService.SaveDecksAsync(_decks.ToList());
+            await LoadDecksAsync();
+            UpdateInfo($"Deck renommé: {trimmedName}");
         }
 
         private async void OnDeleteDeckClicked(object sender, EventArgs e)
         {
-            Button? button = sender as Button;
-            Deck? deck = button?.CommandParameter as Deck;
-
-            if (deck == null) return;
+            if (sender is not Button button || button.CommandParameter is not Deck deck)
+            {
+                return;
+            }
 
             bool confirm = await DisplayAlert(
-                "Confirmation",
-                $"Voulez-vous vraiment supprimer '{deck.Name}' ?",
+                "Supprimer le deck",
+                $"Supprimer '{deck.Name}' et ses {deck.CardCount} carte(s) ?",
                 "Supprimer",
-                "Annuler"
-            );
+                "Annuler");
 
-            if (!confirm) return;
+            if (!confirm)
+            {
+                return;
+            }
 
-            _decks.Remove(deck);  // ← La vue se met à jour automatiquement !
+            _decks.Remove(deck);
             await _dataService.SaveDecksAsync(_decks.ToList());
-
-            // RefreshView();  ← SUPPRIMÉ !
-            UpdateInfo($"Supprimé: {deck.Name}");
-        }
-        protected override void OnAppearing()
-        {
-            base.OnAppearing();
-
-            // RefreshView();  ← SUPPRIMÉ !
-            // L'ObservableCollection met déjà à jour la vue automatiquement
+            UpdateInfo($"Deck supprimé: {deck.Name}");
         }
     }
 }

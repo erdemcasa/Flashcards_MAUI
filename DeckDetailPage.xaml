@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="FlashCard.DeckDetailPage"
+             Title="Détails du deck">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="14">
+            <Label x:Name="DeckTitleLabel"
+                   FontSize="26"
+                   FontAttributes="Bold"
+                   TextColor="#281451" />
+
+            <Border BackgroundColor="#F6F4FB" Stroke="Transparent" Padding="14">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="16" />
+                </Border.StrokeShape>
+
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Nouvelle carte"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           TextColor="#281451" />
+                    <Entry x:Name="QuestionEntry"
+                           Placeholder="Question / recto" />
+                    <Editor x:Name="AnswerEditor"
+                            Placeholder="Réponse / verso"
+                            AutoSize="TextChanges"
+                            HeightRequest="90" />
+                    <Button x:Name="SaveCardButton"
+                            Text="Ajouter la carte"
+                            Clicked="OnSaveCardClicked"
+                            BackgroundColor="#281451"
+                            TextColor="White" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="Cartes du deck"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   TextColor="#281451" />
+
+            <CollectionView x:Name="CardsCollectionView"
+                            SelectionMode="None">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Border Margin="0,4"
+                                Padding="14"
+                                Stroke="#DDD7F2"
+                                BackgroundColor="White">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="16" />
+                            </Border.StrokeShape>
+
+                            <VerticalStackLayout Spacing="8">
+                                <Label Text="{Binding Question}"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       TextColor="#281451" />
+                                <Label Text="{Binding Answer}"
+                                       FontSize="14"
+                                       TextColor="#4A4A4A" />
+                                <Label Text="{Binding CreatedDate, StringFormat='Ajoutée le {0:dd/MM/yyyy HH:mm}'}"
+                                       FontSize="11"
+                                       TextColor="#9A9A9A" />
+
+                                <HorizontalStackLayout Spacing="8"
+                                                       HorizontalOptions="End">
+                                    <Button Text="Modifier"
+                                            Clicked="OnEditCardClicked"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#F1EAFE"
+                                            TextColor="#281451" />
+                                    <Button Text="Supprimer"
+                                            Clicked="OnDeleteCardClicked"
+                                            CommandParameter="{Binding .}"
+                                            BackgroundColor="#FCE8E6"
+                                            TextColor="#A10D0D" />
+                                </HorizontalStackLayout>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <VerticalStackLayout HorizontalOptions="Center"
+                                         VerticalOptions="Center"
+                                         Spacing="8">
+                        <Label Text="🃏"
+                               FontSize="56"
+                               HorizontalOptions="Center" />
+                        <Label Text="Aucune carte"
+                               FontSize="18"
+                               TextColor="#6E6E6E"
+                               HorizontalOptions="Center" />
+                        <Label Text="Ajoutez votre première carte ci-dessus"
+                               FontSize="13"
+                               TextColor="#9A9A9A"
+                               HorizontalOptions="Center" />
+                    </VerticalStackLayout>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+            <Label x:Name="InfoLabel"
+                   Text="Prêt"
+                   FontSize="12"
+                   TextColor="#6E6E6E"
+                   HorizontalOptions="Center" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

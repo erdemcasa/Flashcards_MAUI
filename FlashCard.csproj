@@ -70,10 +70,16 @@
 	  <Compile Update="DecksPage.xaml.cs">
 	    <DependentUpon>DecksPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="DeckDetailPage.xaml.cs">
+	    <DependentUpon>DeckDetailPage.xaml</DependentUpon>
+	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <MauiXaml Update="DecksPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="DeckDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

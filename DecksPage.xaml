@@ -4,97 +4,101 @@
              x:Class="FlashCard.DecksPage"
              Title="Mes decks">
 
-    <Grid RowDefinitions="Auto,*,Auto" Padding="10">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="16" RowSpacing="12">
 
-        <!-- Header with add button -->
-        <HorizontalStackLayout Grid.Row="0"
-                              Spacing="10"
-                              Margin="0,0,0,10">
+        <Label Text="Gestion des decks"
+               FontSize="26"
+               FontAttributes="Bold"
+               TextColor="#281451" />
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto" ColumnSpacing="10">
             <Entry x:Name="NewDeckEntry"
                    Placeholder="Nom du nouveau deck"
-                   HorizontalOptions="FillAndExpand" />
-            <Button Text="Ajouter"
+                   ClearButtonVisibility="WhileEditing" />
+            <Button Grid.Column="1"
+                    Text="Ajouter"
                     Clicked="OnAddDeckClicked"
-                    BackgroundColor="#2196F3"
+                    BackgroundColor="#281451"
                     TextColor="White" />
-        </HorizontalStackLayout>
+        </Grid>
 
-        <!-- Decks list -->
-        <CollectionView Grid.Row="1"
-                       x:Name="DecksCollectionView"
-                       SelectionMode="None">
+        <CollectionView Grid.Row="2"
+                        x:Name="DecksCollectionView"
+                        SelectionMode="None">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame Margin="0,5"
-                           Padding="10"
-                           BorderColor="LightGray"
-                           CornerRadius="8"
-                           HasShadow="True">
-                        <Grid ColumnDefinitions="*,Auto,Auto">
+                    <Border Margin="0,4"
+                            Padding="14"
+                            Stroke="#DDD7F2"
+                            BackgroundColor="White">
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="16" />
+                        </Border.StrokeShape>
 
-                            <!-- Deck info -->
-                            <StackLayout Grid.Column="0"
-                                        VerticalOptions="Center">
+                        <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto" RowSpacing="8" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Row="0" Grid.Column="0" Spacing="4">
                                 <Label Text="{Binding Name}"
                                        FontSize="18"
-                                       FontAttributes="Bold" />
+                                       FontAttributes="Bold"
+                                       TextColor="#281451" />
                                 <Label Text="{Binding CardCount, StringFormat='{0} cartes'}"
-                                       FontSize="14"
-                                       TextColor="Gray" />
+                                       FontSize="13"
+                                       TextColor="#6E6E6E" />
                                 <Label Text="{Binding CreatedDate, StringFormat='Créé le {0:dd/MM/yyyy}'}"
                                        FontSize="12"
-                                       TextColor="LightGray" />
-                            </StackLayout>
+                                       TextColor="#9A9A9A" />
+                            </VerticalStackLayout>
 
-                            <!-- Edit button -->
-                            <Button Grid.Column="1"
-                                   Text="✏️"
-                                   FontSize="20"
-                                   BackgroundColor="Transparent"
-                                   Clicked="OnEditDeckClicked"
-                                   CommandParameter="{Binding .}" />
+                            <Button Grid.Row="0"
+                                    Grid.Column="1"
+                                    Text="Cartes"
+                                    Clicked="OnOpenDeckClicked"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="#DED9EE"
+                                    TextColor="#281451" />
 
-                            <!-- Delete button -->
-                            <Button Grid.Column="2"
-                                   Text="🗑️"
-                                   FontSize="20"
-                                   BackgroundColor="Transparent"
-                                   Clicked="OnDeleteDeckClicked"
-                                   CommandParameter="{Binding .}" />
+                            <HorizontalStackLayout Grid.Row="1"
+                                                   Grid.ColumnSpan="2"
+                                                   Spacing="8"
+                                                   HorizontalOptions="End">
+                                <Button Text="Renommer"
+                                        Clicked="OnEditDeckClicked"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#F1EAFE"
+                                        TextColor="#281451" />
+                                <Button Text="Supprimer"
+                                        Clicked="OnDeleteDeckClicked"
+                                        CommandParameter="{Binding .}"
+                                        BackgroundColor="#FCE8E6"
+                                        TextColor="#A10D0D" />
+                            </HorizontalStackLayout>
                         </Grid>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
 
-            <!-- Empty view -->
             <CollectionView.EmptyView>
-                <StackLayout HorizontalOptions="Center"
-                            VerticalOptions="Center">
-                    <Label Text="📚"
-                           FontSize="60"
-                           HorizontalOptions="Center" />
-                    <Label Text="Aucun deck"
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="8">
+                    <Label Text="📚" FontSize="56" HorizontalOptions="Center" />
+                    <Label Text="Aucun deck pour le moment"
                            FontSize="18"
-                           TextColor="Gray"
+                           TextColor="#6E6E6E"
                            HorizontalOptions="Center" />
-                    <Label Text="Créez votre premier deck ci-dessus"
-                           FontSize="14"
-                           TextColor="LightGray"
+                    <Label Text="Créez un deck pour commencer à ajouter des cartes"
+                           FontSize="13"
+                           TextColor="#9A9A9A"
                            HorizontalOptions="Center" />
-                </StackLayout>
+                </VerticalStackLayout>
             </CollectionView.EmptyView>
         </CollectionView>
 
-        <!-- Info bar -->
-        <Label Grid.Row="2"
+        <Label Grid.Row="3"
                x:Name="InfoLabel"
                Text="Prêt"
                FontSize="12"
-               TextColor="Gray"
-               HorizontalOptions="Center"
-               Margin="0,10,0,0" />
+               TextColor="#6E6E6E"
+               HorizontalOptions="Center" />
     </Grid>
-    
-    
-    
 </ContentPage>

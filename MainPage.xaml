@@ -4,80 +4,71 @@
              x:Class="FlashCard.MainPage"
              BackgroundColor="#281451">
 
-    <Grid RowDefinitions="80, *">
+    <Grid RowDefinitions="Auto,*" Padding="20">
+        <VerticalStackLayout Spacing="8">
+            <Label Text="FlashCard"
+                   TextColor="White"
+                   FontSize="30"
+                   FontAttributes="Bold" />
+            <Label x:Name="StatsLabel"
+                   Text="Chargement..."
+                   TextColor="#DDD9EE"
+                   FontSize="14" />
+        </VerticalStackLayout>
 
-        <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Padding="20, 10">
-            <Label Text="FLASH67" 
-                   TextColor="White" 
-                   FontSize="28" 
-                   FontAttributes="Bold" 
-                   VerticalOptions="Center" 
-                   HorizontalOptions="Start"/>
-
-            <Label Grid.Column="1" 
-                   Text="erdemcasa" 
-                   TextColor="White" 
-                   VerticalOptions="Center" 
-                   Margin="0,0,10,0"/>
-        </Grid>
-
-        <Border Grid.Row="1" 
-                BackgroundColor="#DED9EE" 
+        <Border Grid.Row="1"
+                BackgroundColor="#DED9EE"
                 StrokeThickness="0">
             <Border.StrokeShape>
-                <RoundRectangle CornerRadius="40,40,0,0" />
+                <RoundRectangle CornerRadius="36,36,0,0" />
             </Border.StrokeShape>
 
-            <StackLayout Padding="20, 25">
+            <VerticalStackLayout Padding="20" Spacing="16">
+                <Label Text="Votre espace d'apprentissage"
+                       FontSize="22"
+                       FontAttributes="Bold"
+                       TextColor="#281451" />
 
-                <FlexLayout JustifyContent="SpaceAround" Margin="0,0,0,25">
-                    <Frame BackgroundColor="White" 
-                           CornerRadius="20" 
-                           HasShadow="False" 
-                           Padding="15, 8" 
-                           BorderColor="Transparent">
-                        <Label Text="Decks publics" 
-                               TextColor="#281451" 
-                               FontAttributes="Bold"
-                               HorizontalOptions="Center"/>
-                    </Frame>
+                <Label Text="Gérez vos decks, puis ajoutez, modifiez et supprimez les cartes depuis une interface unique."
+                       FontSize="14"
+                       TextColor="#4A4A4A" />
 
-                    <Label Text="Mes decks" 
-                           TextColor="#281451" 
-                           VerticalOptions="Center" 
-                           FontAttributes="Bold"/>
+                <Button Text="Ouvrir mes decks"
+                        Clicked="OnOpenDecksClicked"
+                        BackgroundColor="#281451"
+                        TextColor="White" />
 
-                    <Label Text="Catégories" 
-                           TextColor="#281451" 
-                           VerticalOptions="Center" 
-                           FontAttributes="Bold"/>
-                </FlexLayout>
+                <Button Text="Créer un deck"
+                        Clicked="OnCreateDeckClicked"
+                        BackgroundColor="#F1EAFE"
+                        TextColor="#281451" />
 
-                <Border Stroke="#281451"
-                        StrokeThickness="1"
-                        BackgroundColor="White"
-                        HeightRequest="45"
-                        HorizontalOptions="Center"
-                        WidthRequest="300">
-                    <Border.StrokeShape>
-                        <RoundRectangle CornerRadius="22" />
-                    </Border.StrokeShape>
+                <CollectionView x:Name="RecentDecksCollectionView"
+                                SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border Margin="0,4"
+                                    Padding="14"
+                                    Stroke="#DDD7F2"
+                                    BackgroundColor="White">
+                                <Border.StrokeShape>
+                                    <RoundRectangle CornerRadius="16" />
+                                </Border.StrokeShape>
 
-                    <Entry Placeholder="Rechercher deck..."
-                           PlaceholderColor="#7D7D7D"
-                           TextColor="#281451"
-                           FontSize="15"
-                           HorizontalTextAlignment="Center"
-                           BackgroundColor="Transparent"
-                           Margin="15,0"/>
-                </Border>
-
-                <ScrollView Margin="0,20,0,0">
-                    <VerticalStackLayout Spacing="10">
-                    </VerticalStackLayout>
-                </ScrollView>
-
-            </StackLayout>
+                                <VerticalStackLayout Spacing="4">
+                                    <Label Text="{Binding Name}"
+                                           FontSize="17"
+                                           FontAttributes="Bold"
+                                           TextColor="#281451" />
+                                    <Label Text="{Binding CardCount, StringFormat='{0} cartes'}"
+                                           FontSize="13"
+                                           TextColor="#6E6E6E" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
         </Border>
     </Grid>
 </ContentPage>

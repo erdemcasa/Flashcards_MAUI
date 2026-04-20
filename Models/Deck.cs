@@ -1,17 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace FlashCard.Models
 {
     public class Deck
     {
+        private List<Card> _cards = new();
+
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }
-        public int CardCount { get; set; }
+        public List<Card> Cards
+        {
+            get => _cards;
+            set => _cards = value ?? new List<Card>();
+        }
+
+        [JsonIgnore]
+        public int CardCount => Cards?.Count ?? 0;
 
         public Deck()
         {
