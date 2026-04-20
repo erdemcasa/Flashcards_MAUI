@@ -62,4 +62,20 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Pages\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="DecksPage.xaml.cs">
+	    <DependentUpon>DecksPage.xaml</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <MauiXaml Update="DecksPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	</ItemGroup>
+
 </Project>
